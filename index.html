@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phone-Style Calculator</title>
+
+  <!-- Link to manifest -->
+  <link rel="manifest" href="manifest.json">
+  
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #ff9a9e, #fad0c4, #fbc2eb);
+      background-size: 400% 400%;
+      animation: gradientBG 10s ease infinite;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    .calculator {
+      background: #333;
+      color: white;
+      border-radius: 20px;
+      width: 320px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+    .display {
+      font-size: 2.5rem;
+      text-align: right;
+      padding: 20px;
+      background: #222;
+      border-top-left-radius: 20px;
+      border-top-right-radius: 20px;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: #444;
+    }
+    button {
+      font-size: 1.5rem;
+      padding: 20px;
+      border: none;
+      background: #555;
+      color: white;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    button:hover {
+      background: #666;
+    }
+    button.operation {
+      background: #ff9500;
+      color: white;
+    }
+    button.operation:hover {
+      background: #ffa31a;
+    }
+    button.zero {
+      grid-column: span 2;
+    }
+  </style>
+</head>
+<body>
+  <div class="calculator">
+    <div class="display" id="display">0</div>
+    <div class="buttons">
+      <button onclick="clearDisplay()">C</button>
+      <button onclick="backspace()">⌫</button>
+      <button onclick="input('%')">%</button>
+      <button class="operation" onclick="input('/')">÷</button>
+      <button onclick="input('7')">7</button>
+      <button onclick="input('8')">8</button>
+      <button onclick="input('9')">9</button>
+      <button class="operation" onclick="input('*')">×</button>
+      <button onclick="input('4')">4</button>
+      <button onclick="input('5')">5</button>
+      <button onclick="input('6')">6</button>
+      <button class="operation" onclick="input('-')">−</button>
+      <button onclick="input('1')">1</button>
+      <button onclick="input('2')">2</button>
+      <button onclick="input('3')">3</button>
+      <button class="operation" onclick="input('+')">+</button>
+      <button class="zero" onclick="input('0')">0</button>
+      <button onclick="input('.')">.</button>
+      <button class="operation" onclick="calculate()">=</button>
+    </div>
+  </div>
+
+  <script>
+    let currentInput = '';
+
+    function input(value) {
+      const display = document.getElementById('display');
+      if (currentInput === '0' && value !== '.') {
+        currentInput = value;
+      } else {
+        currentInput += value;
+      }
+      display.innerText = currentInput;
+    }
+
+    function clearDisplay() {
+      currentInput = '';
+      document.getElementById('display').innerText = '0';
+    }
+
+    function backspace() {
+      currentInput = currentInput.slice(0, -1);
+      document.getElementById('display').innerText = currentInput || '0';
+    }
+
+    function calculate() {
+      try {
+        currentInput = eval(currentInput).toString();
+        document.getElementById('display').innerText = currentInput;
+      } catch {
+        document.getElementById('display').innerText = 'Error';
+        currentInput = '';
+      }
+    }
+
+    // Service Worker Registration
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('service-worker.js').then(function(registration) {
+          console.log('Service Worker registered with scope:', registration.scope);
+        }).catch(function(error) {
+          console.log('Service Worker registration failed:', error);
+        });
+      });
+    }
+  </script>
+</body>
+</html>
